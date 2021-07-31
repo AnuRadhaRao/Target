@@ -22,9 +22,9 @@ def string_match(token: str):
             token_count = text.count(token.lower())
             # print(token, " : ", token_count)
         search_results[filename] = token_count
-        # print(search_results)
+        print(search_results)
 
-    print_results(search_results)
+    return(search_results)
 
 
 # function to use text search using regex
@@ -39,7 +39,7 @@ def regex_match(regex: str):
             token_count = len(re.findall(regex, text))
         search_results[filename] = token_count
 
-    print_results(search_results)
+    return(search_results)
 
 
 # function to preprocess content and then search index
@@ -73,7 +73,7 @@ def indexed_search(token: str):
     for filename, index in search_index.items():
         # print(file)
         search_results[filename] = index.get(token, 0)
-    print_results(search_results)
+    return search_results
 
 
 def print_results(output: str):
@@ -95,16 +95,19 @@ def main():
         sys.exit("Please enter a valid input")
 
     search_token = input("Enter your search string: ")
+
+    token_matches = []
     
     if search_method == 1:
-        string_match(search_token)
+        token_matches = string_match(search_token)
     elif search_method == 2:
-        regex_match(search_token)
+        token_matches = regex_match(search_token)
     elif search_method == 3:
-        indexed_search(search_token)
+        token_matches = indexed_search(search_token)
     else:
         print("Not a valid input, please enter one the options")
 
+    print_results(token_matches)
 
 if __name__ == "__main__":
     # 2. Time for operation

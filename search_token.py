@@ -4,7 +4,7 @@ import sys
 from os import listdir
 
 # path to directory
-SEARCH_FILES = "sample_text"
+SEARCH_DIRECTORY = "sample_text"
 
 
 # function for single string matching
@@ -13,9 +13,9 @@ def string_match(token: str):
     search_results = {}
     # if token.isalnum() is False:
     #     sys.exit("That is so spaced out")
-    for filename in listdir(SEARCH_FILES):
+    for filename in listdir(SEARCH_DIRECTORY):
         token_count = 0
-        with open(SEARCH_FILES + "/" + filename) as currentfile:
+        with open(SEARCH_DIRECTORY + "/" + filename) as currentfile:
             # print(filename)
             text = currentfile.read().lower()
             # print(text)
@@ -31,9 +31,9 @@ def string_match(token: str):
 def regex_match(regex: str):
     # print("in regex")
     search_results = {}
-    for filename in listdir(SEARCH_FILES):
+    for filename in listdir(SEARCH_DIRECTORY):
         token_count = 0
-        with open(SEARCH_FILES + "/" + filename) as currentfile:
+        with open(SEARCH_DIRECTORY + "/" + filename) as currentfile:
             # print(filename)
             text = currentfile.read().lower()
             # print(re.findall(regex, text))
@@ -51,9 +51,9 @@ def indexed_search(token: str):
     search_index = {}
 
     # preprocess and create a search index
-    for filename in listdir(SEARCH_FILES):
+    for filename in listdir(SEARCH_DIRECTORY):
         glossary = {}
-        with open(SEARCH_FILES + "/" + filename) as currentfile:
+        with open(SEARCH_DIRECTORY + "/" + filename) as currentfile:
             # text = currentfile.read()
             for line in currentfile:
                 line = line.strip()

@@ -31,3 +31,8 @@ Enter your search string:
 - The file names and their relevant matches
 - The execution time of the program
 
+## Furthermore..
+I have included a MapReduce program in java, which provides a solution to processing large data for the same scenario. 
+- Jar file of this program should be created and run the jar file in the HDFS system
+- 'cat' the output file created to see the results on the console
+

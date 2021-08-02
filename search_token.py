@@ -35,7 +35,8 @@ def regex_match(regex: str):
         token_count = 0
         with open(SEARCH_FILES + "/" + filename) as currentfile:
             # print(filename)
-            text = currentfile.read()
+            text = currentfile.read().lower()
+            # print(re.findall(regex, text))
             token_count = len(re.findall(regex, text))
         search_results[filename] = token_count
 
@@ -60,7 +61,7 @@ def indexed_search(token: str):
                 words = line.split(" ")
                 for word in words:
                     word = [character for character in word if character.isalnum()]
-                    word = "".join(word)
+                    word = "".join(word).lower()
                     # print(word)
                     if word not in glossary:
                         glossary[word] = 1
@@ -72,7 +73,7 @@ def indexed_search(token: str):
 
     for filename, index in search_index.items():
         # print(file)
-        search_results[filename] = index.get(token, 0)
+        search_results[filename] = index.get(token.lower(), 0)
     return search_results
 
 
@@ -113,7 +114,4 @@ if __name__ == "__main__":
     # 2. Time for operation
     start_time = time.time()
     main()
-    print("Elapsed time: ", (time.time() - start_time))
-
-
-# TODO : Run a performance test
+    print("Elapsed time: ", (time.time()- start_time))

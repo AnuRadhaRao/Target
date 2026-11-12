@@ -31,14 +31,20 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(result['french_armed_forces.txt'], 3)
     
     def test_regex_match_hitchhiker(self):
-        result = regex_match("\[\d\]")
+        result = regex_match(r"\[\d\]")
         # print(result)
         self.assertEqual(result['hitchhikers.txt'], 5)
     
     def test__regex_match_warp(self):
-        result = regex_match("\([^\"]*\)")
+        result = regex_match(r"\([^\"]*\)")
         # print(result)
         self.assertEqual(result['warp_drive.txt'], 2)
+
+    def test_regex_match_is_case_insensitive(self):
+        upper = regex_match("FRENCH")
+        lower = regex_match("french")
+        self.assertEqual(upper, lower)
+        self.assertGreater(upper['french_armed_forces.txt'], 0)
 
     def test_indexed_match_french(self):
         result = indexed_search("conflicts")

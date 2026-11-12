@@ -37,7 +37,7 @@ def regex_match(regex: str):
             # print(filename)
             text = currentfile.read().lower()
             # print(re.findall(regex, text))
-            token_count = len(re.findall(regex, text))
+            token_count = len(re.findall(regex, text, re.IGNORECASE))
         search_results[filename] = token_count
 
     return(search_results)

@@ -25,6 +25,16 @@ class TestStringMethods(unittest.TestCase):
         # print(result)
         self.assertEqual(result['french_armed_forces.txt'], 0)
     
+    def test_string_match_whole_words_only(self):
+        # "art" appears inside other words but never on its own
+        result = string_match("art")
+        self.assertEqual(result['hitchhikers.txt'], 0)
+
+    def test_string_match_finds_phrase(self):
+        # 6 mentions of "Hitchhiker's", one of them without "Guide" after it
+        result = string_match("hitchhiker's guide")
+        self.assertEqual(result['hitchhikers.txt'], 5)
+
     def test_regex_match_french(self):
         result = regex_match("Franc.-")
         # print(result)
@@ -55,6 +65,14 @@ class TestStringMethods(unittest.TestCase):
         result = indexed_search("Guide")
         # print(result)
         self.assertEqual(result['hitchhikers.txt'], 8)
+
+    def test_indexed_match_keeps_apostrophes(self):
+        result = indexed_search("Hitchhiker's")
+        self.assertEqual(result['hitchhikers.txt'], 6)
+
+    def test_string_and_indexed_agree_on_single_words(self):
+        for word in ["the", "guide", "hitchhiker", "warp", "conflicts"]:
+            self.assertEqual(string_match(word), indexed_search(word), word)
 
     def test_indexed_match_warp(self):
         result = indexed_search("blue")

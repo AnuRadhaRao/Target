@@ -7,24 +7,32 @@ from os import listdir
 SEARCH_DIRECTORY = "sample_text"
 
 
-# function for single string matching
-def string_match(token: str):
-    # print("in string match")
-    search_results = {}
-    # if token.isalnum() is False:
-    #     sys.exit("That is so spaced out")
-    for filename in listdir(SEARCH_DIRECTORY):
-        token_count = 0
-        with open(SEARCH_DIRECTORY + "/" + filename) as currentfile:
-            # print(filename)
-            text = currentfile.read().lower()
-            # print(text)
-            token_count = text.count(token.lower())
-            # print(token, " : ", token_count)
-        search_results[filename] = token_count
-        # print(search_results)
+# words are runs of letters/digits, keeping inner apostrophes ("don't")
+WORD_PATTERN = re.compile(r"[a-z0-9]+(?:'[a-z0-9]+)*")
 
-    return(search_results)
+
+def read_document(filename: str) -> str:
+    with open(SEARCH_DIRECTORY + "/" + filename, encoding="utf-8") as currentfile:
+        # normalise curly apostrophes so "hitchhiker’s" matches "hitchhiker's"
+        return currentfile.read().lower().replace("\u2019", "'")
+
+
+def tokenize(text: str) -> list:
+    return WORD_PATTERN.findall(text.lower().replace("\u2019", "'"))
+
+
+# function for whole-word / whole-phrase matching
+def string_match(token: str):
+    search_results = {}
+    # match the term only when it is not part of a longer word,
+    # so "art" does not count inside "party"
+    term = re.escape(token.lower().replace("\u2019", "'"))
+    pattern = re.compile(r"(?<![a-z0-9])(?<![a-z0-9]')" + term + r"(?!'?[a-z0-9])")
+    for filename in listdir(SEARCH_DIRECTORY):
+        text = read_document(filename)
+        search_results[filename] = len(pattern.findall(text))
+
+    return search_results
 
 
 # function to use text search using regex
@@ -33,11 +41,8 @@ def regex_match(regex: str):
     search_results = {}
     for filename in listdir(SEARCH_DIRECTORY):
         token_count = 0
-        with open(SEARCH_DIRECTORY + "/" + filename) as currentfile:
-            # print(filename)
-            text = currentfile.read().lower()
-            # print(re.findall(regex, text))
-            token_count = len(re.findall(regex, text, re.IGNORECASE))
+        text = read_document(filename)
+        token_count = len(re.findall(regex, text, re.IGNORECASE))
         search_results[filename] = token_count
 
     return(search_results)
@@ -53,27 +58,14 @@ def indexed_search(token: str):
     # preprocess and create a search index
     for filename in listdir(SEARCH_DIRECTORY):
         glossary = {}
-        with open(SEARCH_DIRECTORY + "/" + filename) as currentfile:
-            # text = currentfile.read()
-            for line in currentfile:
-                line = line.strip()
-                line = line.lower()
-                words = line.split(" ")
-                for word in words:
-                    word = [character for character in word if character.isalnum()]
-                    word = "".join(word).lower()
-                    # print(word)
-                    if word not in glossary:
-                        glossary[word] = 1
-                    else:
-                        glossary[word] = glossary.get(word) + 1
-            # print(glossary)
+        for word in tokenize(read_document(filename)):
+            glossary[word] = glossary.get(word, 0) + 1
         search_index[filename] = glossary
-        # print(search_index)
 
+    # the index holds single words, so normalise the search term the same way
+    terms = tokenize(token)
     for filename, index in search_index.items():
-        # print(file)
-        search_results[filename] = index.get(token.lower(), 0)
+        search_results[filename] = index.get(terms[0], 0) if len(terms) == 1 else 0
     return search_results
 
 

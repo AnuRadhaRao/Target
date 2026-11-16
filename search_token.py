@@ -48,23 +48,34 @@ def regex_match(regex: str):
     return(search_results)
 
 
-# function to preprocess content and then search index
-def indexed_search(token: str):
+# the index is built once per process and reused by every indexed search
+_search_index = None
 
-    # print("in index search")
-    search_results = {}
+
+def build_index() -> dict:
+    """Return {filename: {word: count}} for every file in SEARCH_DIRECTORY."""
     search_index = {}
-
-    # preprocess and create a search index
     for filename in listdir(SEARCH_DIRECTORY):
         glossary = {}
         for word in tokenize(read_document(filename)):
             glossary[word] = glossary.get(word, 0) + 1
         search_index[filename] = glossary
+    return search_index
 
+
+def get_index(rebuild: bool = False) -> dict:
+    global _search_index
+    if _search_index is None or rebuild:
+        _search_index = build_index()
+    return _search_index
+
+
+# function to search the preprocessed index
+def indexed_search(token: str):
+    search_results = {}
     # the index holds single words, so normalise the search term the same way
     terms = tokenize(token)
-    for filename, index in search_index.items():
+    for filename, index in get_index().items():
         search_results[filename] = index.get(terms[0], 0) if len(terms) == 1 else 0
     return search_results
 

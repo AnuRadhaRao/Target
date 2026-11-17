@@ -1,28 +1,26 @@
+import io
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
 
-from search_token import string_match, regex_match, indexed_search
+from search_token import indexed_search, main, regex_match, string_match
 
 
 class TestStringMethods(unittest.TestCase):
 
     def test_string_match_hitchiker(self):
         result = string_match("hitchhiker's")
-        # print(result)
         self.assertEqual(result['hitchhikers.txt'], 6)
 
     def test_string_match_warp(self):
         result = string_match("warp")
-        # print(result)
         self.assertEqual(result['warp_drive.txt'], 6)
 
     def test_string_match_armed_forces(self):
         result = string_match("french")
-        # print(result)
         self.assertEqual(result['french_armed_forces.txt'], 11)
     
     def test_string_match_no_match(self):
         result = string_match("extreme")
-        # print(result)
         self.assertEqual(result['french_armed_forces.txt'], 0)
     
     def test_string_match_whole_words_only(self):
@@ -37,17 +35,14 @@ class TestStringMethods(unittest.TestCase):
 
     def test_regex_match_french(self):
         result = regex_match("Franc.-")
-        # print(result)
         self.assertEqual(result['french_armed_forces.txt'], 3)
     
     def test_regex_match_hitchhiker(self):
         result = regex_match(r"\[\d\]")
-        # print(result)
         self.assertEqual(result['hitchhikers.txt'], 5)
     
     def test__regex_match_warp(self):
         result = regex_match(r"\([^\"]*\)")
-        # print(result)
         self.assertEqual(result['warp_drive.txt'], 2)
 
     def test_regex_match_is_case_insensitive(self):
@@ -58,12 +53,10 @@ class TestStringMethods(unittest.TestCase):
 
     def test_indexed_match_french(self):
         result = indexed_search("conflicts")
-        # print(result)
         self.assertEqual(result['french_armed_forces.txt'], 4)
     
     def test_indexed_match_hitchhiker(self):
         result = indexed_search("Guide")
-        # print(result)
         self.assertEqual(result['hitchhikers.txt'], 8)
 
     def test_indexed_match_keeps_apostrophes(self):
@@ -76,8 +69,23 @@ class TestStringMethods(unittest.TestCase):
 
     def test_indexed_match_warp(self):
         result = indexed_search("blue")
-        # print(result)
         self.assertEqual(result['warp_drive.txt'], 0)
  
+    def test_cli_ranks_files_by_matches(self):
+        out = io.StringIO()
+        with redirect_stdout(out):
+            self.assertEqual(main(["--method", "string", "warp"]), 0)
+        first_line = out.getvalue().splitlines()[0]
+        self.assertTrue(first_line.startswith("warp_drive.txt"), first_line)
+
+    def test_cli_rejects_bad_regex(self):
+        with redirect_stderr(io.StringIO()):
+            self.assertEqual(main(["--method", "regex", "("]), 2)
+
+    def test_cli_rejects_missing_folder(self):
+        with redirect_stderr(io.StringIO()):
+            self.assertEqual(main(["--dir", "/no/such/dir", "-m", "string", "x"]), 2)
+
+
 if __name__ == '__main__':
     unittest.main()

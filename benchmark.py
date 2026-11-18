@@ -30,7 +30,7 @@ def main():
     vocabulary = sorted({w for index in search_token.build_index().values() for w in index})
     terms = [rng.choice(vocabulary) for _ in range(args.searches)]
     for i in range(0, len(terms), 10):
-        terms[i] = "zzz-no-match-%d" % i
+        terms[i] = f"zzz-no-match-{i}"
 
     for name in args.methods:
         search = METHODS[name]

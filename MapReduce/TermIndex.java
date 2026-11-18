@@ -1,8 +1,4 @@
-package search;
-
 import java.io.IOException;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +20,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
  *
  * <p>Output lines look like: {@code guide<TAB>hitchhikers.txt=8}
  *
- * <p>Usage: {@code hadoop jar term-index-1.0.0.jar search.TermIndex <input dir> <output dir>}
+ * <p>Usage: {@code hadoop jar term-index.jar TermIndex <input dir> <output dir>}
  */
 public class TermIndex {
 

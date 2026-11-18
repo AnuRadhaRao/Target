@@ -1,0 +1,7 @@
+# Hadoop client jars needed to compile TermIndex.java and run it in local mode,
+# as paths on Maven Central (https://repo1.maven.org/maven2/).
+# build.sh downloads these into lib/ when Hadoop is not installed.
+org/apache/hadoop/hadoop-client-api/3.4.1/hadoop-client-api-3.4.1.jar
+org/apache/hadoop/hadoop-client-runtime/3.4.1/hadoop-client-runtime-3.4.1.jar
+org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar
+commons-logging/commons-logging/1.2/commons-logging-1.2.jar

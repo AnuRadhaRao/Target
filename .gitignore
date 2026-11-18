@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+MapReduce/build/
+MapReduce/lib/
+MapReduce/term-index.jar
